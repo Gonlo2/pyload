@@ -7,8 +7,8 @@ import random
 import re
 import struct
 
-import Cryptodome.Cipher.AES
-import Cryptodome.Util.Counter
+import Crypto.Cipher.AES
+import Crypto.Util.Counter
 
 from pyload.core.network.http.exceptions import BadHeader
 from pyload.core.utils.old import decode
@@ -78,15 +78,15 @@ class MegaCrypto:
 
     @staticmethod
     def cbc_decrypt(data, key):
-        cbc = Cryptodome.Cipher.AES.new(
-            MegaCrypto.a32_to_str(key), Cryptodome.Cipher.AES.MODE_CBC, "\0" * 16
+        cbc = Crypto.Cipher.AES.new(
+            MegaCrypto.a32_to_str(key), Crypto.Cipher.AES.MODE_CBC, "\0" * 16
         )
         return cbc.decrypt(data)
 
     @staticmethod
     def cbc_encrypt(data, key):
-        cbc = Cryptodome.Cipher.AES.new(
-            MegaCrypto.a32_to_str(key), Cryptodome.Cipher.AES.MODE_CBC, "\0" * 16
+        cbc = Crypto.Cipher.AES.new(
+            MegaCrypto.a32_to_str(key), Crypto.Cipher.AES.MODE_CBC, "\0" * 16
         )
         return cbc.encrypt(data)
 
@@ -172,13 +172,13 @@ class MegaCrypto:
             self.hash = "\0" * 16
             self.key = MegaCrypto.a32_to_str(k)
             self.iv = MegaCrypto.a32_to_str(iv[0:2] * 2)
-            self.AES = Cryptodome.Cipher.AES.new(
-                self.key, mode=Cryptodome.Cipher.AES.MODE_CBC, IV=self.hash
+            self.AES = Crypto.Cipher.AES.new(
+                self.key, mode=Crypto.Cipher.AES.MODE_CBC, IV=self.hash
             )
 
         def update(self, chunk):
-            cbc = Cryptodome.Cipher.AES.new(
-                self.key, mode=Cryptodome.Cipher.AES.MODE_CBC, IV=self.iv
+            cbc = Crypto.Cipher.AES.new(
+                self.key, mode=Crypto.Cipher.AES.MODE_CBC, IV=self.iv
             )
             for j in range(0, len(chunk), 16):
                 block = chunk[j : j + 16].ljust(16, "\0")
@@ -306,11 +306,11 @@ class MegaCoNz(BaseDownloader):
         Decrypts and verifies checksum to the file at 'last_download'.
         """
         k, iv, meta_mac = MegaCrypto.get_cipher_key(key)
-        ctr = Cryptodome.Util.Counter.new(
+        ctr = Crypto.Util.Counter.new(
             128, initial_value=((iv[0] << 32) + iv[1]) << 64
         )
-        cipher = Cryptodome.Cipher.AES.new(
-            MegaCrypto.a32_to_str(k), Cryptodome.Cipher.AES.MODE_CTR, counter=ctr
+        cipher = Crypto.Cipher.AES.new(
+            MegaCrypto.a32_to_str(k), Crypto.Cipher.AES.MODE_CTR, counter=ctr
         )
 
         self.pyfile.set_status("decrypting")

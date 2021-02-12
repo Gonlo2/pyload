@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import Cryptodome.PublicKey.RSA
+import Crypto.PublicKey.RSA
 
 from ..base.account import BaseAccount
 from ..downloaders.MegaCoNz import MegaClient, MegaCrypto
@@ -95,7 +95,7 @@ class MegaCoNz(BaseAccount):
                 privk = privk[l:]
 
             encrypted_sid = self.mpi_to_int(MegaCrypto.base64_decode(res["csid"]))
-            rsa = Cryptodome.PublicKey.RSA.construct(
+            rsa = Crypto.PublicKey.RSA.construct(
                 (
                     rsa_private_key[0] * rsa_private_key[1],
                     int(0),

@@ -188,8 +188,8 @@ def sign_string(message, pem_private, pem_passphrase="", sign_algo="SHA384"):
     """
     Generate a signature for string using the `sign_algo` and `RSA` algorithms.
     """
-    from Cryptodome.PublicKey import RSA
-    from Cryptodome.Signature import PKCS1_v1_5
+    from Crypto.PublicKey import RSA
+    from Crypto.Signature import PKCS1_v1_5
     from binascii import b2a_hex
 
     if sign_algo not in ("MD5", "SHA1", "SHA256", "SHA384", "SHA512"):
@@ -200,7 +200,7 @@ def sign_string(message, pem_private, pem_passphrase="", sign_algo="SHA384"):
     priv_key = RSA.import_key(pem_private, passphrase=pem_passphrase)
     signer = PKCS1_v1_5.new(priv_key)
     digest = getattr(
-        __import__("Cryptodome.Hash", fromlist=[sign_algo]), sign_algo
+        __import__("Crypto.Hash", fromlist=[sign_algo]), sign_algo
     ).new()
     digest.update(message)
     return b2a_hex(signer.sign(digest))
